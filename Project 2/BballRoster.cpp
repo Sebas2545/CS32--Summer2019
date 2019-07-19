@@ -1,7 +1,5 @@
 #include "BballRoster.h"
 
-//TODO -- add assignment operator
-
 BballRoster::BballRoster() {
 	size = 0;
 
@@ -10,20 +8,16 @@ BballRoster::BballRoster() {
 }
 
 BballRoster::BballRoster(const BballRoster& copy) {
-	size = copy.size;
+	size = 0;
 
 	dummy.next = &dummy;
 	dummy.prev = &dummy;
 
 	Node* ptrCopy = copy.dummy.next; //traverses copy
-	Node* ptr = &dummy;
 
-	while(ptr != &(copy.dummy)) {
-		Node* temp = new Node(ptrCopy->firstName, ptrCopy->lastName, ptrCopy->value, ptr, ptr->next);
-		ptr->next->prev = temp;
-		ptr->next = temp;
-
-		ptr = ptr->next;
+	while(ptrCopy != &(copy.dummy)) {
+		signPlayer(ptrCopy->firstName, ptrCopy->lastName, ptrCopy->value);
+		ptrCopy = ptrCopy->next;
 	}
 }
 
@@ -49,16 +43,38 @@ int BballRoster::howManyPlayers() const {
 }
 
 bool BballRoster::signPlayer(const std::string& firstName, const std::string& lastName, const SomeType& value) {
-	Node* ptr = dummy.next;
+	Node* ptr = &dummy;
 
-	if(ptr == &dummy) {
+	if(ptr->next == &dummy) {
 		Node* temp = new Node(firstName, lastName, value, &dummy, &dummy);
 		dummy.next = temp;
 		dummy.prev = temp;
+		++size;
 		return true;
 	}
 
+	if(lastName <= ptr->next->lastName) {
+		if(lastName == ptr->next->lastName) {
+			if(firstName < ptr->next->firstName) {
+				Node* temp = new Node(firstName, lastName, value, ptr->next, ptr);
+				ptr->next->prev = temp;
+				ptr->next = temp;
+				++size;
 
+				return true;
+			}
+		}
+		else {
+			Node* temp = new Node(firstName, lastName, value, ptr->next, ptr);
+			temp->next->prev = temp;
+			ptr->next = temp;
+
+			++size;
+
+			return true;
+		}
+	}
+	ptr = ptr->next;
 
 	while(ptr != &dummy) {
 		//already exists
@@ -91,7 +107,6 @@ bool BballRoster::signPlayer(const std::string& firstName, const std::string& la
 					return true;
 				}
 		}
-
 		ptr = ptr->next;
 	}
 
@@ -112,59 +127,10 @@ bool BballRoster::resignPlayer(const std::string& firstName, const std::string& 
 }
 
 bool BballRoster::signOrResign(const std::string& firstName, const std::string& lastName, const SomeType& value) {
-	Node* ptr = dummy.next;
-
-	if(ptr == &dummy) {
-		Node* temp = new Node(firstName, lastName, value, &dummy, &dummy);
-		dummy.next = temp;
-		dummy.prev = temp;
+	if(signPlayer(firstName, lastName, value) == false)
+		return resignPlayer(firstName, lastName, value);
+	else
 		return true;
-	}
-
-
-
-	while(ptr != &dummy) {
-		//already exists
-		if((ptr->firstName == firstName) && (ptr->lastName ==lastName)) {
-			ptr->value = value;
-			return true;
-		}
-
-		//if it is in a potential correct position
-		if((lastName >= ptr->lastName) && (lastName <= ptr->next->lastName)) {
-
-			//if last names don't match
-			//but the position is correct
-			if((lastName > ptr->lastName) && (lastName < ptr->next->lastName)) {
-				Node* temp = new Node(firstName, lastName, value, ptr->next, ptr);
-				temp->next->prev = temp;
-				ptr->next = temp;
-				++size;
-
-				return true;
-			}
-
-			//if last name is the same, wait until first names are in correct position
-			if((lastName == ptr->lastName) && (lastName == ptr->next->lastName))
-				if((firstName >= ptr->firstName) && (firstName <= ptr->next->firstName)) {
-
-					Node* temp = new Node(firstName, lastName, value, ptr, ptr->next);
-					ptr->next->prev = temp;
-					ptr->next = temp;
-					++size;
-
-					return true;
-				}
-		}
-
-		ptr = ptr->next;
-	}
-
-	throw std::logic_error("Fully traversed list");
-
-
-
-	return true;
 }
 
 bool BballRoster::renouncePlayer(const std::string& firstName, const std::string& lastName) {
@@ -175,7 +141,7 @@ bool BballRoster::renouncePlayer(const std::string& firstName, const std::string
 			Node* garbage = ptr;
 			ptr->prev->next = ptr->next;
 			ptr->next->prev = ptr->prev;
-
+			--size;
 			delete garbage;
 
 			return true;
@@ -241,8 +207,39 @@ void BballRoster::swapRoster(BballRoster& other) {
 	dummy.prev = ptrTemp;
 }
 
+BballRoster BballRoster::operator=(const BballRoster& rhs) {
+	Node* ptr = dummy.next;
+	Node* garbage;
+
+	while(ptr != &dummy) {
+		garbage = ptr;
+		ptr = ptr->next;
+		delete garbage;
+	}
+	size = 0;
+	dummy.next = &dummy;
+	dummy.prev = &dummy;
+
+	ptr = rhs.dummy.next;
+
+	while(ptr != &(rhs.dummy)) {
+		signPlayer(ptr->firstName, ptr->lastName, ptr->value);
+		ptr = ptr->next;
+	}
+	return *this;
+}
+
 //don't forget to delete the original list in bbJoined before adding to it
 bool joinRosters(const BballRoster& bbOne, const BballRoster& bbTwo, BballRoster& bbJoined) {
+	std::string fName;
+	std::string lName;
+	SomeType val;
+
+	while(bbJoined.rosterEmpty() == false) {
+
+
+	}
+
 
 
 	return false;
