@@ -1,3 +1,5 @@
+//Actually the most disgusting piece of code I have ever written
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -93,7 +95,6 @@ int main() {
 	        std::cout << "No matches found" << std::endl;
 	    else
 	        showResults(results, numMatches);
-
 
 	return 0;
 }
