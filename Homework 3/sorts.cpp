@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <algorithm>
 #include <numeric>  // for std::accumulate
@@ -302,7 +301,7 @@ int main()
      vector<Sensor*> ptrs;
 
      for(int i = 0; i < auxSensors.size(); i++)
-    	 ptrs[i] = &auxSensors[i];
+    	 ptrs.push_back(&auxSensors[i]);
 
       // TODO:  Sort the vector of pointers using the STL sort algorithm
       //        with compareSensorPtr as the ordering relationship.
@@ -315,7 +314,7 @@ int main()
      vector<Sensor> temp;
 
      for(int i = 0; i < ptrs.size(); i++)
-    	 temp[i] = *ptrs[i];
+    	 temp.push_back(*ptrs[i]);
 
      sensors = temp;
 
