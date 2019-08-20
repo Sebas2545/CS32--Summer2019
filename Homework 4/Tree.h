@@ -1,11 +1,7 @@
 /*
- *
  * GUIDE:
  * -Left is lower/smaller
  * -Default left
- *
- *
- *
  *
  */
 
@@ -40,27 +36,27 @@ private:
 	WordNode *root;
 
 	WordNode* findItem(WordNode* currNode, IType item);
-	WordNode* helpAdd(WordNode* currNode, IType item);
+	int distinctWordsHelper(WordNode* currNode, int num) const;
+	void freeTree(WordNode* currNode);
 public:
-	// default constructor
+
     WordTree() : root(nullptr) {};
     // copy constructor
     WordTree(const WordTree& rhs);
     // assignment operator
     const WordTree& operator=(const WordTree& rhs);
-    // Inserts v into the WordTree
+
     void add(IType v);
-    // Returns the number of distinct words / nodes
-    int distinctWords() const;
+
+    int distinctWords() const {int num = 0; distinctWordsHelper(root, num); return num;};
 
     // Returns the total number of words inserted, including
     // duplicate values
     int totalWords() const;
     // Prints the LinkedList
     friend std::ostream& operator<<(std::ostream &out, const WordTree& rhs);
-    // Destroys all the dynamically allocated memory in the
-    // tree
-    ~WordTree();
+
+    ~WordTree() {freeTree(root);};
 };
 
 

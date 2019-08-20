@@ -22,33 +22,59 @@ WordNode* WordTree::findItem(WordNode* currNode, IType item) {
 	return findItem(currNode->m_right, item); // else, go left
 }
 
-WordNode* WordTree::helpAdd(WordNode* currNode, IType item) {
-	if(currNode == 0)
-		throw(std::logic_error("Cannot Add"));
-	if(item > currNode->m_left->m_data) { //checks left hand side
-		if(currNode->m_right == 0) { //if right is empty, add new node
-			currNode->m_right = new WordNode(item, 0, 0);
-			return 0;
-		}
-		else if(currNode->m_right->m_data == item) { // if node with item already exists, increment add attempts
-			++currNode->m_right->attemptedAdd;
-			return 0;
-		}
-		else {
-			return helpAdd(currNode->m_right, item);
-		}
-	}
-	else {
-
-
-	}
-}
-
-void WordTree::add(IType value) {
+void WordTree::add(IType v) {
 	if(root == 0) // if the tree is empty, add the root
-		root = new WordNode(value, 0, 0);
+		root = new WordNode(v, 0, 0);
+
+	WordNode* currNode = root;
+	for(;;) {
+		if(v == currNode->m_data)
+			return;
+		if(currNode->m_data > v) {
+			if(currNode->m_left != 0) {
+				currNode = currNode->m_left;
+			}
+			else {
+				currNode->m_left = new WordNode(v, 0, 0);
+				return;
+			}
+		}
+		else if(currNode->m_data < v) {
+			if(currNode->m_right != 0) {
+				currNode = currNode->m_right;
+			}
+			else{
+				currNode->m_right = new WordNode(v, 0, 0);
+				return;
+			}
+		}
+	}
+}
 
 
-
+const WordTree& WordTree::operator=(const WordTree& rhs) {
 
 }
+
+int WordTree::distinctWordsHelper(WordNode* currNode, int num) const {
+	if(currNode == 0)
+		return num;
+
+	int num1 = distinctWordsHelper(currNode->m_left, num + 1);
+
+	int num2 = distinctWordsHelper(currNode->m_right, num + 1);
+
+	return num1 + num2;
+}
+
+void WordTree::freeTree(WordNode* currNode) {
+	if(currNode == 0)
+		return;
+
+	freeTree(currNode->m_left);
+
+	freeTree(currNode->m_right);
+
+	delete currNode;
+}
+
