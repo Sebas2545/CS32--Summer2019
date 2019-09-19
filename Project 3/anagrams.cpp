@@ -1,5 +1,3 @@
-//Actually the most disgusting piece of code I have ever written
-
 #include <iostream>
 #include <string>
 #include <fstream>
